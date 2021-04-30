@@ -1,4 +1,4 @@
-module Parse (parsePlantUML) where
+module Parse where
 
 import Text.Parsec
 import Grammar
@@ -10,7 +10,7 @@ parsePlantUML :: String -> String -> Either String [Element]
 parsePlantUML sourceName = either (Left . show) return . parse elements sourceName
 
 elements = do
-  elems <- sepBy element spaces
+  elems <- element `sepEndBy` (space <|> endOfLine <|> tab)
   eof
   return elems
 
@@ -60,23 +60,23 @@ readLine = do
 edge = do
   leftName <- className
   hspaces
-  leftHead <- option "" (string "<|" <|> string "<") <?> "left arrow head"
+  leftHead <- option "" (string "<|" <|> string "<" <|> string "*" <|> string "o") <?> "left arrow head"
   style <- edgeStyle
-  rightHead <- option "" (string "|>" <|> string ">") <?> "right arrow head"
+  rightHead <- option "" (string "|>" <|> string ">" <|> string "*" <|> string "o") <?> "right arrow head"
   hspaces
   rightName <- className
   return $ Edge (EdgeEnd leftName leftHead) (EdgeEnd rightName rightHead) style ""
 
 edgeStyle = (solid <|> dotted) <?> "arrow center"
-  where solid = (string "--" <|> string "-") >> return Solid
-        dotted = (string ".." <|> string ".") >> return Dotted
+  where solid = (try (string "--") <|> string "-") >> return Solid
+        dotted = (try (string "..") <|> string ".") >> return Dotted
 
 className = do
-  x <- letter <?> "class name"
-  xs <- many (satisfy (\c -> isAlphaNum c || c == '.'))
+  x <- letter
+  xs <- many (alphaNum <|> char '.')
   return $ x:xs
 
-hspace = (oneOf " \t")
+hspace = space <|> tab
 hspaces = many hspace
 hspaces1 = many1 hspace
 

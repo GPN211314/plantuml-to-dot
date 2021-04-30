@@ -28,7 +28,7 @@ library:
   source-dirs: src
 
 executables:
-  plantuml-to-dot-exe:
+  plantuml2dot:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -39,7 +39,7 @@ executables:
     - plantuml-to-dot
 
 tests:
-  plantuml-to-dot-test:
+  plantuml2dot-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:

@@ -13,20 +13,19 @@ outputElement (Node nodeType name fields methods) =
   outputNodeElements fields ++ outputNodeElements methods ++ "}\"]\n"
 outputElement (Edge (EdgeEnd leftName leftHead) (EdgeEnd rightName rightHead) style annotation) =
   left ++ right
-  where left =
-          if leftHead == "<|" then
-            outputName rightName ++ " -> " ++ outputName leftName ++ " [arrowhead=onormal,style=" ++ outputEdgeStyle style ++  "]\n"
-          else if leftHead == "<" then
-            outputName rightName ++ " -> " ++ outputName leftName ++ " [arrowhead=vee,style=" ++ outputEdgeStyle style ++  "]\n"
-          else
-            ""
-        right =
-          if rightHead == "|>" then
-            outputName leftName ++ " -> " ++ outputName rightName ++ " [arrowhead=onormal,style=" ++ outputEdgeStyle style ++  "]\n"
-          else if rightHead == ">" then
-            outputName leftName ++ " -> " ++ outputName rightName ++ " [arrowhead=vee,style=" ++ outputEdgeStyle style ++  "]\n"
-          else
-            ""
+      where left = case leftHead of
+                     "<|" -> outputName rightName ++ " -> " ++ outputName leftName ++ " [arrowhead=onormal,style=" ++ outputEdgeStyle style ++  "]\n"
+                     "<"  -> outputName rightName ++ " -> " ++ outputName leftName ++ " [arrowhead=vee,style=" ++ outputEdgeStyle style ++  "]\n"
+                     "*"  -> outputName rightName ++ " -> " ++ outputName leftName ++ " [arrowhead=diamond,style=" ++ outputEdgeStyle style ++  "]\n"
+                     "o"  -> outputName rightName ++ " -> " ++ outputName leftName ++ " [arrowhead=odiamond,style=" ++ outputEdgeStyle style ++  "]\n"
+                     _    -> ""
+            right = case rightHead of
+                     "|>" -> outputName leftName ++ " -> " ++ outputName rightName ++ " [arrowhead=onormal,style=" ++ outputEdgeStyle style ++  "]\n"
+                     ">"  -> outputName leftName ++ " -> " ++ outputName rightName ++ " [arrowhead=vee,style=" ++ outputEdgeStyle style ++  "]\n"
+                     "*"  -> outputName leftName ++ " -> " ++ outputName rightName ++ " [arrowhead=diamond,style=" ++ outputEdgeStyle style ++  "]\n"
+                     "o"  -> outputName leftName ++ " -> " ++ outputName rightName ++ " [arrowhead=odiamond,style=" ++ outputEdgeStyle style ++  "]\n"
+                     _    -> ""
+
 
 outputNodeType Class = "class"
 outputNodeType Interface = "interface"
